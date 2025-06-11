@@ -1,109 +1,17 @@
-// import React from "react";
-// import { Button, Checkbox, Form, Input } from "antd";
-// import { UserOutlined } from "@ant-design/icons";
-// import { MdOutlineEmail } from "react-icons/md";
-// import { RiLockPasswordLine } from "react-icons/ri";
-
-// const SignUp = () => {
-//     const onFinish = async (values) => {
-//         // console.log("Success:", values);
-//         const data = await fetch(
-//             import.meta.env.VITE_API_URL + "/api/auth/signup",
-//             {
-//                 method: "POST",
-//                 headers: {
-//                     "Content-Type": "application/json",
-//                 },
-//                 body: JSON.stringify(values),
-//                 credentials: "include", // Include cookies in the request
-//             }
-//         );
-//         // console.log("data:->  " + data.json());
-//         const json = await data.json();
-//         console.log("json:->  ", json);
-//     };
-//     const onFinishFailed = (errorInfo) => {
-//         console.log("Failed:", errorInfo);
-//     };
-//     return (
-//         <div>
-//             <Form
-//                 name="basic"
-//                 layout="vertical"
-//                 style={{ maxWidth: 600 }}
-//                 initialValues={{ remember: true }}
-//                 onFinish={onFinish}
-//                 onFinishFailed={onFinishFailed}
-//                 autoComplete="off"
-//             >
-//                 <Form.Item
-//                     label="Username"
-//                     name="username"
-//                     rules={[
-//                         {
-//                             required: true,
-//                             message: "Please input your username!",
-//                         },
-//                     ]}
-//                 >
-//                     <Input
-//                         prefix={<UserOutlined />}
-//                         placeholder="Enter your username"
-//                     />
-//                     {/* <p className="text-red-500">Username is not available</p>  */}
-//                 </Form.Item>
-
-//                 <Form.Item
-//                     label="Email"
-//                     name="email"
-//                     rules={[
-//                         {
-//                             required: true,
-//                             message: "Please enter your email!",
-//                         },
-//                     ]}
-//                 >
-//                     <Input
-//                         prefix={<MdOutlineEmail />}
-//                         placeholder="Enter your email"
-//                     />
-//                 </Form.Item>
-
-//                 <Form.Item
-//                     label="Password"
-//                     name="password"
-//                     rules={[
-//                         {
-//                             required: true,
-//                             message: "Please input your password!",
-//                         },
-//                     ]}
-//                 >
-//                     <Input.Password
-//                         prefix={<RiLockPasswordLine />}
-//                         placeholder="Enter your password"
-//                     />
-//                 </Form.Item>
-
-//                 <Form.Item label={null}>
-//                     <Button type="primary" htmlType="submit">
-//                         Submit
-//                     </Button>
-//                 </Form.Item>
-//             </Form>
-//         </div>
-//     );
-// };
-
-// export default SignUp;
-
-import React from "react";
+import React, { useState, useRef } from "react";
 import { Button, Form, Input } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import { MdOutlineEmail } from "react-icons/md";
 import { RiLockPasswordLine } from "react-icons/ri";
+import { useNavigate } from "react-router";
 
 const SignUp = () => {
+    const [usernameError, setUsernameError] = useState("");
+    const [usernameStatus, setUsernameStatus] = useState(""); // "available", "taken", or ""
+    const debounceRef = useRef(null);
+    const navigate = useNavigate();
+    const lastCheckedUsernameRef = useRef("");
+
     const onFinish = async (values) => {
         const data = await fetch(
             import.meta.env.VITE_API_URL + "/api/auth/signup",
@@ -117,11 +25,63 @@ const SignUp = () => {
             }
         );
         const json = await data.json();
-        console.log("json:->  ", json);
+        if (json.error) {
+            console.error("Error signing up:", json.error);
+        }
+        navigate("/", { replace: true });
     };
 
     const onFinishFailed = (errorInfo) => {
         console.log("Failed:", errorInfo);
+    };
+
+    const checkUsername = (username) => {
+        if (username.length > 0 && username.length < 3) {
+            setUsernameError("Username must be at least 3 characters.");
+            setUsernameStatus("taken");
+            return;
+        }
+        if (debounceRef.current) clearTimeout(debounceRef.current);
+        if (!username) {
+            setUsernameError("");
+            setUsernameStatus("");
+            lastCheckedUsernameRef.current = "";
+            return;
+        }
+
+        debounceRef.current = setTimeout(() => {
+            checkUsernameAvailability(username);
+        }, 500);
+    };
+
+    const checkUsernameAvailability = async (username) => {
+        if (username === lastCheckedUsernameRef.current) return;
+        try {
+            const response = await fetch(
+                import.meta.env.VITE_API_URL + "/api/auth/check-username",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ username }),
+                    credentials: "include",
+                }
+            );
+            const json = await response.json();
+
+            if (json.available) {
+                setUsernameStatus("available");
+                setUsernameError("Username is available");
+            } else {
+                setUsernameStatus("taken");
+                setUsernameError("Username is already taken");
+            }
+            lastCheckedUsernameRef.current = username;
+        } catch (error) {
+            setUsernameStatus("taken");
+            setUsernameError("Error checking username");
+        }
     };
 
     return (
@@ -153,8 +113,21 @@ const SignUp = () => {
                             prefix={<UserOutlined className="text-gray-400" />}
                             placeholder="Enter your username"
                             className="py-2"
+                            onChange={(e) => checkUsername(e.target.value)}
                         />
                     </Form.Item>
+
+                    {usernameError && (
+                        <p
+                            className={`text-sm transition-all duration-300  ${
+                                usernameStatus === "available"
+                                    ? "text-green-500"
+                                    : "text-red-500"
+                            }`}
+                        >
+                            {usernameError}
+                        </p>
+                    )}
 
                     <Form.Item
                         label="Email"

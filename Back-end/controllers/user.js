@@ -227,3 +227,30 @@ export const getSelfProfile = async (req, res) => {
         });
     }
 };
+
+export const checkUsername=async(req,res)=>{
+    const { username } = req.body;
+    try {
+        if (!username) {
+            return res.status(400).json({
+                error: "Username is required",
+            });
+        }
+        const user = await User.findOne({ username });
+        if (user) {
+            return res.status(200).json({
+                available: false,
+                message: "Username is already taken",
+            });
+        }
+        return res.status(200).json({
+            available: true,
+            message: "Username is available",
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: "Error checking username",
+            details: error.message,
+        });
+    }
+}
