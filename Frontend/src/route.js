@@ -5,6 +5,7 @@ import Root from "./layouts/Root";
 import Not_Authenticated from "./layouts/Not_Authenticated";
 import Authenticated from "./layouts/Authenticated";
 import Dashboard from "./Pages/Dashboard";
+import Login from "./Pages/Login";
 
 export const router = createBrowserRouter([
     {
@@ -29,6 +30,10 @@ export const router = createBrowserRouter([
                         path: "/signup",
                         Component: SignUp,
                     },
+                    {
+                        path: "/login",
+                        Component:Login,
+                    }
                     
                 ],
             },
