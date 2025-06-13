@@ -529,6 +529,7 @@ import { MdOutlineEmail } from "react-icons/md";
 import { RiLockPasswordLine } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 import { userStore } from "../zustand/store";
+import toast from "react-hot-toast";
 
 const SignUp = () => {
     const [usernameError, setUsernameError] = useState("");
@@ -556,6 +557,7 @@ const SignUp = () => {
             const json = await data.json();
 
             if (json.error) {
+                toast.error("Error signing up: " + json.error);
                 console.error("Error signing up:", json.error);
                 // You might want to show an error message to the user here
             } else {
@@ -564,6 +566,7 @@ const SignUp = () => {
                 navigate("/", { replace: true });
             }
         } catch (error) {
+            toast.error("Signup failed. Please try again.");
             console.error("Signup error:", error);
         } finally {
             setLoading(false);
@@ -571,6 +574,7 @@ const SignUp = () => {
     };
 
     const onFinishFailed = (errorInfo) => {
+        toast.error("Form submission failed. Please check your inputs.");
         console.log("Failed:", errorInfo);
     };
 
@@ -618,6 +622,7 @@ const SignUp = () => {
             }
             lastCheckedUsernameRef.current = username;
         } catch (error) {
+            toast.error("Error checking username. Please try again.");
             console.error("Error checking username:", error);
             setUsernameStatus("taken");
             setUsernameError("Error checking username");
