@@ -6,6 +6,9 @@ import Not_Authenticated from "./layouts/Not_Authenticated";
 import Authenticated from "./layouts/Authenticated";
 import Dashboard from "./Pages/Dashboard";
 import Login from "./Pages/Login";
+import Ticket from "./Pages/Ticket";
+import Profile from "./Pages/Profile";
+import Users from "./Pages/Users";
 
 export const router = createBrowserRouter([
     {
@@ -19,6 +22,21 @@ export const router = createBrowserRouter([
                     {
                         path: "/",
                         Component: Dashboard,
+                        children: [
+                            {
+                                path: "/",
+                                Component: Ticket,
+                            },
+                            {
+                                path:"/me",
+                                Component:Profile
+                            },
+                            {
+                                path:"/users",
+                                Component:Users,
+                            }
+                        ],
+
                     },
                 ],
             },

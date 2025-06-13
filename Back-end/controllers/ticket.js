@@ -74,6 +74,7 @@ export const getTickets = async (req, res) => {
 export const getTicket = async (req, res) => {
     try {
         const user = req.user;
+        console.log("User fetching ticket:", user);
         if (!user) {
             return res.status(401).json({
                 error: "Unauthorized",
@@ -81,10 +82,9 @@ export const getTicket = async (req, res) => {
         }
         let ticket;
         if (user.role !== "user") {
-            ticket = await Ticket.findById(req.params.id).populate(
-                "assignedTo",
-                ["email", "_id"]
-            );
+            ticket = await Ticket.findById(req.params.id)
+                .populate("assignedTo", ["email", "_id"])
+                .populate("createdBy", "username");
         } else {
             ticket = await Ticket.findOne({
                 createdBy: user._id,
@@ -104,6 +104,73 @@ export const getTicket = async (req, res) => {
         console.error("Error fetching ticket:", error);
         return res.status(500).json({
             error: "Error fetching single ticket",
+            message: error.message,
+        });
+    }
+};
+
+export const closeTicket = async (req, res) => {
+    try {
+        const user = req.user;
+        console.log("User closing ticket:", user);
+        if (!user) {
+            return res.status(401).json({
+                error: "Unauthorized",
+            });
+        }
+        const ticket = await Ticket.findById(req.params.id);
+        console.log("ticket id which is to be closed", req.params.id);
+        if (!ticket) {
+            return res.status(404).json({
+                error: "Ticket not found",
+            });
+        }
+        /* if (ticket.createdBy.toString() !== user._id.toString()) {
+            return res.status(403).json({
+                error: "You are not authorized to close this ticket",
+            });
+        } */
+
+        const isCreator = ticket.createdBy.toString() === user._id.toString();
+        const isAssignee =
+            ticket.assignedTo?.toString() === user._id.toString();
+        const isAdmin = user.role === "admin";
+
+        if (!isCreator && !isAssignee && !isAdmin) {
+            return res.status(403).json({
+                error: "You are not authorized to close this ticket",
+            });
+        }
+        console.log("Ticket Creator:", ticket.createdBy.toString());
+        console.log("Ticket Assignee:", ticket.assignedTo?.toString());
+        console.log(
+            "Requesting User:",
+            user._id.toString(),
+            "Role:",
+            user.role
+        );
+        
+
+        ticket.status = "closed";
+        await ticket.save();
+        await inngest.send({
+            name: "ticket/closed",
+            data: {
+                ticketId: ticket._id.toString(),
+                closedBy: user._id.toString(),
+            },
+        });
+
+        console.log("📨 Event sent: ticket/closed");
+
+        return res.status(200).json({
+            message: "Ticket closed successfully",
+            ticket: ticket,
+        });
+    } catch (error) {
+        console.error("Error closing ticket:", error);
+        return res.status(500).json({
+            error: "Error closing ticket",
             message: error.message,
         });
     }
