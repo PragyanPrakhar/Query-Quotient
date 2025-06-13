@@ -6,7 +6,7 @@ const ticketSchema = new mongoose.Schema({
     status: {
         type: String,
         enum: ["open", "in-progress", "closed"],
-        default: "open",
+        default: "in-progress",
     },
     createdBy: {
         type: mongoose.Schema.Types.ObjectId,

@@ -34,10 +34,14 @@ const Ticket = () => {
     const fetchTickets = async () => {
         setLoading(true);
         try {
-            const res = await fetch(import.meta.env.VITE_API_URL+"/api/tickets", {
-                credentials: "include",
-            });
+            const res = await fetch(
+                import.meta.env.VITE_API_URL + "/api/tickets",
+                {
+                    credentials: "include",
+                }
+            );
             const data = await res.json();
+            console.log("Tickets fetched:", data);
             if (res.ok) {
                 setTickets(data.tickets);
             } else {
@@ -68,25 +72,38 @@ const Ticket = () => {
         return tagMap[status] || <Tag color="default">{status}</Tag>;
     };
 
-    const getPriorityTag = (priority) => {
+    /* const getPriorityTag = (priority) => {
         const colors = { high: "red", medium: "orange", low: "blue" };
         return (
             <Tag color={colors[priority] || "default"}>
                 {priority.toUpperCase()}
             </Tag>
         );
+    }; */
+    const getPriorityTag = (priority) => {
+        if (typeof priority !== "string") {
+            return <Tag color="default">Unknown</Tag>;
+        }
+
+        const colors = { high: "red", medium: "orange", low: "blue" };
+        const color = colors[priority.toLowerCase()] || "default";
+
+        return <Tag color={color}>{priority.toUpperCase()}</Tag>;
     };
 
     const createTicket = async (values) => {
         try {
-            const res = await fetch("/api/tickets", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                credentials: "include",
-                body: JSON.stringify(values),
-            });
+            const res = await fetch(
+                import.meta.env.VITE_API_URL + "/api/tickets",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    credentials: "include",
+                    body: JSON.stringify(values),
+                }
+            );
             const data = await res.json();
             if (res.ok) {
                 toast.success("Ticket created successfully!");
@@ -181,7 +198,7 @@ const Ticket = () => {
                                     </p>
                                     <p className="text-gray-600 mb-1">
                                         <strong>Priority:</strong>{" "}
-                                        {getPriorityTag(ticket.priority)}
+                                        {getPriorityTag(ticket?.priority)}
                                     </p>
                                     <p className="text-gray-400 text-sm mt-2">
                                         Created on:{" "}

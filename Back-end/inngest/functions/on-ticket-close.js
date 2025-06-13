@@ -34,8 +34,8 @@ export const onTicketClose = inngest.createFunction(
                     ticketTitle: ticket.title,
                     ticketId: ticket._id.toString(),
                     closedAt: new Date(ticket.updatedAt).toLocaleString(),
-                    
                 }));
+                console.log("📧 Email sent to:", ticket.createdBy.email);
             });
             return { success: true };
         } catch (error) {

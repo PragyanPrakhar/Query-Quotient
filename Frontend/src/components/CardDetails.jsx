@@ -23,10 +23,13 @@ const CardDetails = ({ ticket, open, setIsModalOpen }) => {
         setLoading(true);
         console.log("Fetching ticket details for ID:", ticket._id);
         try {
-            const res = await fetch(import.meta.env.VITE_API_URL + `/api/tickets/${ticket._id}`, {
-            method: "GET",
-                credentials: "include",
-            });
+            const res = await fetch(
+                import.meta.env.VITE_API_URL + `/api/tickets/${ticket._id}`,
+                {
+                    method: "GET",
+                    credentials: "include",
+                }
+            );
             const json = await res.json();
             console.log("Ticket fetch response:", json);
             if (!res.ok) throw new Error(json.message || "Failed to fetch");
@@ -42,10 +45,14 @@ const CardDetails = ({ ticket, open, setIsModalOpen }) => {
 
     const handleCloseTicket = async () => {
         try {
-            const res = await fetch(import.meta.env.VITE_API_URL + `/api/tickets/close-ticket/${ticket._id}`, {
-                method: "POST",
-                credentials: "include",
-            });
+            const res = await fetch(
+                import.meta.env.VITE_API_URL +
+                    `/api/tickets/close-ticket/${ticket._id}`,
+                {
+                    method: "POST",
+                    credentials: "include",
+                }
+            );
             const json = await res.json();
             if (!res.ok)
                 throw new Error(json.message || "Failed to close ticket");
@@ -108,7 +115,10 @@ const CardDetails = ({ ticket, open, setIsModalOpen }) => {
                         </p>
                         <p>
                             <MailOutlined /> <strong>Created By:</strong>{" "}
-                            {console.log(ticketData?.createdBy?.username || "N/A")}
+                            {console.log("Ticket Data is :-> ", ticketData)}
+                            {console.log(
+                                ticketData?.createdBy?.username || "N/A"
+                            )}
                             {ticketData?.createdBy?.username || "N/A"}
                         </p>
 

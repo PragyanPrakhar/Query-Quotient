@@ -24,7 +24,10 @@ const userSchema = new mongoose.Schema({
         enum: ["user", "moderator", "admin"],
         default: "user",
     },
-    skills: [String],
+    skills: {
+        type: [String],
+        default: ["General Support"],
+    },
     createdAt: { type: Date, default: Date.now },
 });
 export default mongoose.model("User", userSchema);
