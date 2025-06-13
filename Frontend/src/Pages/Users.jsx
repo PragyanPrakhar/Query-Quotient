@@ -12,9 +12,12 @@ const Users = () => {
 
     const fetchUsers = async () => {
         try {
-            const res = await fetch(import.meta.env.VITE_API_URL + "/api/auth/users", {
-                credentials: "include",
-            });
+            const res = await fetch(
+                import.meta.env.VITE_API_URL + "/api/auth/users",
+                {
+                    credentials: "include",
+                }
+            );
             const data = await res.json();
             if (res.ok) {
                 setUsers(data.users);
@@ -32,17 +35,21 @@ const Users = () => {
 
     const updateUser = async (userData) => {
         try {
-            const res = await fetch(import.meta.env.VITE_API_URL + "/api/auth/update-user", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                credentials: "include",
-                body: JSON.stringify(userData),
-            });
+            const res = await fetch(
+                import.meta.env.VITE_API_URL + "/api/auth/update-user",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    credentials: "include",
+                    body: JSON.stringify(userData),
+                }
+            );
             const data = await res.json();
             if (res.ok) {
-                toast.success("User updated successfully!");
+                // toast.success("User updated successfully!");
+                toast.success(data.message || "User updated successfully!");
                 fetchUsers();
                 setOpen(false);
                 form.resetFields();
@@ -98,10 +105,18 @@ const Users = () => {
         },
     ];
 
-    const onFinish = (values) => {
+    /* const onFinish = (values) => {
         updateUser(values);
     };
+    */
 
+    const onFinish = (values) => {
+        const payload = {
+            ...values,
+            userId: selectedUserId,
+        };
+        updateUser(payload);
+    };
     return (
         <div>
             <div className="h-[60vh] w-full rounded-2xl bg-cover bg-center bg-no-repeat">

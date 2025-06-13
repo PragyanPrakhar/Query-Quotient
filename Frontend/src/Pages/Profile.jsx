@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import {
     Card,
-    Descriptions,
     Avatar,
     Spin,
     Alert,
@@ -162,37 +161,59 @@ const ProfileDetails = () => {
                                 <Col xs={24} sm={16}>
                                     <Title
                                         level={2}
-                                        style={{ marginBottom: "8px" }}
+                                        style={{
+                                            marginBottom: "8px",
+                                            wordBreak: "break-word",
+                                        }}
                                     >
                                         {user?.username}
                                     </Title>
-                                    <Space direction="vertical" size="small">
+                                    <Space
+                                        direction="vertical"
+                                        size="small"
+                                        style={{ width: "100%" }}
+                                    >
                                         <Text
                                             type="secondary"
                                             style={{
                                                 display: "flex",
-                                                alignItems: "center",
+                                                alignItems: "flex-start",
                                                 gap: "8px",
+                                                wordBreak: "break-all",
                                             }}
                                         >
-                                            <MailOutlined /> {user?.email}
+                                            <MailOutlined
+                                                style={{
+                                                    marginTop: "2px",
+                                                    flexShrink: 0,
+                                                }}
+                                            />
+                                            <span>{user?.email}</span>
                                         </Text>
                                         <Text
                                             type="secondary"
                                             style={{
                                                 display: "flex",
-                                                alignItems: "center",
+                                                alignItems: "flex-start",
                                                 gap: "8px",
                                             }}
                                         >
-                                            <CalendarOutlined /> Joined on{" "}
-                                            {new Date(
-                                                user?.createdAt
-                                            ).toLocaleDateString("en-US", {
-                                                year: "numeric",
-                                                month: "long",
-                                                day: "numeric",
-                                            })}
+                                            <CalendarOutlined
+                                                style={{
+                                                    marginTop: "2px",
+                                                    flexShrink: 0,
+                                                }}
+                                            />
+                                            <span>
+                                                Joined on{" "}
+                                                {new Date(
+                                                    user?.createdAt
+                                                ).toLocaleDateString("en-US", {
+                                                    year: "numeric",
+                                                    month: "long",
+                                                    day: "numeric",
+                                                })}
+                                            </span>
                                         </Text>
                                     </Space>
                                 </Col>
@@ -258,7 +279,7 @@ const ProfileDetails = () => {
                     </Row>
                 </Col>
 
-                {/* Detailed Information */}
+                {/* Detailed Information - Using Card Grid Layout */}
                 <Col xs={24} md={20} lg={18} xl={16}>
                     <Card
                         title={
@@ -278,90 +299,232 @@ const ProfileDetails = () => {
                             boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)",
                         }}
                     >
-                        <Descriptions
-                            bordered
-                            column={{ xs: 1, sm: 1, md: 1 }}
-                            size="middle"
-                            labelStyle={{ fontWeight: "bold" }}
-                            contentStyle={{ padding: "16px" }}
-                        >
-                            <Descriptions.Item
-                                label={
-                                    <Space>
-                                        <IdcardOutlined /> Username
-                                    </Space>
-                                }
-                                labelStyle={{ background: "#fafafa" }}
-                            >
-                                <div style={{ whiteSpace: "nowrap" }}>
-                                    {user?.username}
-                                </div>
-                            </Descriptions.Item>
-
-                            <Descriptions.Item
-                                label={
-                                    <Space>
-                                        <MailOutlined /> Email Address
-                                    </Space>
-                                }
-                                labelStyle={{ background: "#fafafa" }}
-                            >
-                                <div style={{ whiteSpace: "nowrap" }}>
-                                    {user?.email}
-                                </div>
-                            </Descriptions.Item>
-
-                            <Descriptions.Item
-                                label={
-                                    <Space>
-                                        <SafetyCertificateOutlined /> Role &
-                                        Permissions
-                                    </Space>
-                                }
-                                labelStyle={{ background: "#fafafa" }}
-                            >
-                                <Tag
-                                    color={getRoleColor(user?.role)}
-                                    style={{ padding: "4px 12px" }}
+                        <Row gutter={[16, 16]}>
+                            {/* Username Card */}
+                            <Col xs={24} sm={12}>
+                                <Card
+                                    size="small"
+                                    style={{
+                                        height: "100%",
+                                        borderRadius: "8px",
+                                        backgroundColor: "#fafafa",
+                                    }}
                                 >
-                                    {user?.role?.toUpperCase()}
-                                </Tag>
-                                <div style={{ marginTop: "8px" }}>
-                                    <Text type="secondary">
-                                        {user?.role === "admin"
-                                            ? "Full system access with administrative privileges"
-                                            : "Standard user access with basic permissions"}
-                                    </Text>
-                                </div>
-                            </Descriptions.Item>
+                                    <div
+                                        style={{
+                                            display: "flex",
+                                            alignItems: "flex-start",
+                                            gap: "12px",
+                                        }}
+                                    >
+                                        <IdcardOutlined
+                                            style={{
+                                                fontSize: "18px",
+                                                color: "#1890ff",
+                                                marginTop: "2px",
+                                                flexShrink: 0,
+                                            }}
+                                        />
+                                        <div style={{ flex: 1, minWidth: 0 }}>
+                                            <Text
+                                                strong
+                                                style={{
+                                                    display: "block",
+                                                    marginBottom: "4px",
+                                                }}
+                                            >
+                                                Username
+                                            </Text>
+                                            <Text
+                                                style={{
+                                                    wordBreak: "break-word",
+                                                    fontSize: "16px",
+                                                }}
+                                            >
+                                                {user?.username}
+                                            </Text>
+                                        </div>
+                                    </div>
+                                </Card>
+                            </Col>
 
-                            <Descriptions.Item
-                                label={
-                                    <Space>
-                                        <CalendarOutlined /> Account Information
-                                    </Space>
-                                }
-                                labelStyle={{ background: "#fafafa" }}
-                            >
-                                <div>
-                                    <div>
-                                        <Text strong>Created on:</Text>{" "}
-                                        {new Date(
-                                            user?.createdAt
-                                        ).toLocaleDateString("en-US", {
-                                            weekday: "long",
-                                            year: "numeric",
-                                            month: "long",
-                                            day: "numeric",
-                                        })}
+                            {/* Email Card */}
+                            <Col xs={24} sm={12}>
+                                <Card
+                                    size="small"
+                                    style={{
+                                        height: "100%",
+                                        borderRadius: "8px",
+                                        backgroundColor: "#fafafa",
+                                    }}
+                                >
+                                    <div
+                                        style={{
+                                            display: "flex",
+                                            alignItems: "flex-start",
+                                            gap: "12px",
+                                        }}
+                                    >
+                                        <MailOutlined
+                                            style={{
+                                                fontSize: "18px",
+                                                color: "#1890ff",
+                                                marginTop: "2px",
+                                                flexShrink: 0,
+                                            }}
+                                        />
+                                        <div style={{ flex: 1, minWidth: 0 }}>
+                                            <Text
+                                                strong
+                                                style={{
+                                                    display: "block",
+                                                    marginBottom: "4px",
+                                                }}
+                                            >
+                                                Email Address
+                                            </Text>
+                                            <Text
+                                                style={{
+                                                    wordBreak: "break-all",
+                                                    fontSize: "16px",
+                                                }}
+                                            >
+                                                {user?.email}
+                                            </Text>
+                                        </div>
                                     </div>
-                                    <div style={{ marginTop: "8px" }}>
-                                        <Text strong>Account age:</Text>{" "}
-                                        {accountAge} days
+                                </Card>
+                            </Col>
+
+                            {/* Role & Permissions Card */}
+                            <Col xs={24}>
+                                <Card
+                                    size="small"
+                                    style={{
+                                        borderRadius: "8px",
+                                        backgroundColor: "#fafafa",
+                                    }}
+                                >
+                                    <div
+                                        style={{
+                                            display: "flex",
+                                            alignItems: "flex-start",
+                                            gap: "12px",
+                                        }}
+                                    >
+                                        <SafetyCertificateOutlined
+                                            style={{
+                                                fontSize: "18px",
+                                                color: "#1890ff",
+                                                marginTop: "2px",
+                                                flexShrink: 0,
+                                            }}
+                                        />
+                                        <div style={{ flex: 1, minWidth: 0 }}>
+                                            <Text
+                                                strong
+                                                style={{
+                                                    display: "block",
+                                                    marginBottom: "8px",
+                                                }}
+                                            >
+                                                Role & Permissions
+                                            </Text>
+                                            <div
+                                                style={{ marginBottom: "8px" }}
+                                            >
+                                                <Tag
+                                                    color={getRoleColor(
+                                                        user?.role
+                                                    )}
+                                                    style={{
+                                                        padding: "4px 12px",
+                                                        fontSize: "14px",
+                                                    }}
+                                                >
+                                                    {user?.role?.toUpperCase()}
+                                                </Tag>
+                                            </div>
+                                            <Text
+                                                type="secondary"
+                                                style={{ lineHeight: "1.5" }}
+                                            >
+                                                {user?.role === "admin"
+                                                    ? "Full system access with administrative privileges"
+                                                    : "Standard user access with basic permissions"}
+                                            </Text>
+                                        </div>
                                     </div>
-                                </div>
-                            </Descriptions.Item>
-                        </Descriptions>
+                                </Card>
+                            </Col>
+
+                            {/* Account Information Card */}
+                            <Col xs={24}>
+                                <Card
+                                    size="small"
+                                    style={{
+                                        borderRadius: "8px",
+                                        backgroundColor: "#fafafa",
+                                    }}
+                                >
+                                    <div
+                                        style={{
+                                            display: "flex",
+                                            alignItems: "flex-start",
+                                            gap: "12px",
+                                        }}
+                                    >
+                                        <CalendarOutlined
+                                            style={{
+                                                fontSize: "18px",
+                                                color: "#1890ff",
+                                                marginTop: "2px",
+                                                flexShrink: 0,
+                                            }}
+                                        />
+                                        <div style={{ flex: 1, minWidth: 0 }}>
+                                            <Text
+                                                strong
+                                                style={{
+                                                    display: "block",
+                                                    marginBottom: "8px",
+                                                }}
+                                            >
+                                                Account Information
+                                            </Text>
+                                            <div
+                                                style={{ marginBottom: "8px" }}
+                                            >
+                                                <Text>
+                                                    <Text strong>
+                                                        Created on:
+                                                    </Text>{" "}
+                                                    {new Date(
+                                                        user?.createdAt
+                                                    ).toLocaleDateString(
+                                                        "en-US",
+                                                        {
+                                                            weekday: "long",
+                                                            year: "numeric",
+                                                            month: "long",
+                                                            day: "numeric",
+                                                        }
+                                                    )}
+                                                </Text>
+                                            </div>
+                                            <div>
+                                                <Text>
+                                                    <Text strong>
+                                                        Account age:
+                                                    </Text>{" "}
+                                                    {accountAge} days
+                                                </Text>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </Card>
+                            </Col>
+                        </Row>
 
                         <Divider />
 

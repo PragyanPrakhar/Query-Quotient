@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 const ticketSchema = new mongoose.Schema({
     title: String,
-    type: String,
+    
     description: String,
     status: {
         type: String,
@@ -19,7 +19,10 @@ const ticketSchema = new mongoose.Schema({
         default: null,
     },
     priority: String,
-    deadline: Date,
+    deadline:{
+        type: Date,
+        // required:true,
+    },
     helpfulNotes: String,
     relatedSkills: [String],
     createdAt: {

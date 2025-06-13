@@ -28,15 +28,14 @@ export const router = createBrowserRouter([
                                 Component: Ticket,
                             },
                             {
-                                path:"/me",
-                                Component:Profile
+                                path: "/me",
+                                Component: Profile,
                             },
                             {
-                                path:"/users",
-                                Component:Users,
-                            }
+                                path: "/users",
+                                Component: Users,
+                            },
                         ],
-
                     },
                 ],
             },
@@ -50,9 +49,8 @@ export const router = createBrowserRouter([
                     },
                     {
                         path: "/login",
-                        Component:Login,
-                    }
-                    
+                        Component: Login,
+                    },
                 ],
             },
         ],

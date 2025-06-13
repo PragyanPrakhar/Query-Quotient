@@ -58,7 +58,16 @@ const Ticket = () => {
         fetchTickets();
     }, []);
 
-    const filteredTickets = tickets.filter((t) => t.status === statusFilter);
+    // const filteredTickets = tickets.filter((t) => t.status === statusFilter);
+    const filteredTickets = tickets.filter((ticket) => {
+        if (statusFilter === "expired") {
+            return (
+                ticket.status !== "closed" &&
+                new Date(ticket.deadline) < new Date()
+            );
+        }
+        return ticket.status === statusFilter;
+    });
     const cardColor =
         statusFilter === "in-progress"
             ? "bg-blue-50 border-blue-100"
@@ -164,6 +173,11 @@ const Ticket = () => {
                                 value: "closed",
                                 icon: <CheckCircleOutlined />,
                             },
+                            {
+                                label: "Expired",
+                                value: "expired",
+                                icon: <ExclamationCircleOutlined />,
+                            },
                         ]}
                         value={statusFilter}
                         onChange={setStatusFilter}
@@ -186,7 +200,18 @@ const Ticket = () => {
                                         </span>
                                     }
                                     className={`rounded-xl border cursor-pointer ${cardColor} hover:shadow-md transition`}
-                                    extra={getStatusTag(ticket.status)}
+                                    // extra={getStatusTag(ticket.status)}
+                                    extra={
+                                        <div className="flex gap-2 items-center">
+                                            {getStatusTag(ticket.status)}
+                                            {statusFilter === "expired" && (
+                                                <Tag color="red">Expired</Tag>
+                                            )}
+                                        </div>
+                                    }
+                                    /* {statusFilter === "expired" && (
+    <Tag color="red" className="ml-2">Expired</Tag>
+)} */
                                 >
                                     <p className="text-gray-600 mb-1">
                                         <strong>Description:</strong>{" "}

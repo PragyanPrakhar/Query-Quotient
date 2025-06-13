@@ -154,31 +154,32 @@ export const logout = async (req, res) => {
 };
 
 export const updateUser = async (req, res) => {
-    const { skills = [], role, email } = req.body;
+    const { skills = [], role, email, userId } = req.body;
     try {
         if (req.user?.role !== "admin") {
             return res.status(403).json({
                 error: "You are not authorized to update user",
             });
         }
-        const user = await User.findOne({ email });
+        const user = await User.findById(userId);
         if (!user) {
             return res.status(404).json({
                 error: "User not found",
             });
         }
         const result = await User.updateOne(
-            { email },
+            { _id: userId },
             {
                 $set: {
+                    email,
                     skills,
                     role,
                 },
             }
         );
         if (result.modifiedCount === 0) {
-            return res.status(400).json({
-                error: "User not updated",
+            return res.json({
+                message: "No changes made, user data already up to date",
             });
         }
         return res.json({
@@ -229,7 +230,7 @@ export const getSelfProfile = async (req, res) => {
     }
 };
 
-export const checkUsername=async(req,res)=>{
+export const checkUsername = async (req, res) => {
     const { username } = req.body;
     try {
         if (!username) {
@@ -254,4 +255,4 @@ export const checkUsername=async(req,res)=>{
             details: error.message,
         });
     }
-}
+};

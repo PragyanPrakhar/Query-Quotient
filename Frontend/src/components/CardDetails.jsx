@@ -35,7 +35,7 @@ const CardDetails = ({ ticket, open, setIsModalOpen }) => {
             if (!res.ok) throw new Error(json.message || "Failed to fetch");
             setTicketData(json.ticket);
 
-            console.log("Ticket Data:", json?.ticket);
+            // console.log("Ticket Data:", json?.ticket);
         } catch (err) {
             toast.error("Error loading ticket details");
         } finally {
@@ -132,13 +132,13 @@ const CardDetails = ({ ticket, open, setIsModalOpen }) => {
                         <p>
                             <ScheduleOutlined /> <strong>Deadline:</strong>{" "}
                             {ticketData?.deadline
-                                ? dayjs(ticketData.deadline).format(
+                                ? dayjs(ticketData?.deadline).format(
                                       "DD MMM YYYY, hh:mm A"
                                   )
                                 : "Not set"}
                         </p>
 
-                        <Divider plain>Description</Divider>
+                        <Divider plain>Description</Divider>        
                         <p>{ticketData?.description}</p>
 
                         {user?.role !== "user" && (
